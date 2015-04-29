@@ -62,6 +62,7 @@ class DynamicImage
          * This MUST end with a trailing slash
          */
         if (!empty($_GET['imageDirectory'])) {
+            //Don't allow '..' to prevent directory traversal
             $this->imageDirectory = str_replace('..', '', $_GET['imageDirectory']);
         } else {
             $this->imageDirectory = null;
@@ -69,6 +70,13 @@ class DynamicImage
 
         $this->cachedFilename = $this->filename . $this->width . 'x'
             . $this->height . $this->extension;
+
+        /**
+         * Check to see if the requested image exists
+         */
+        if ($this->_imageExists() === false) {
+            return;
+        }
 
         /**
          * Check to see if the requested image is cached, if it is, then
@@ -163,5 +171,16 @@ class DynamicImage
         } else {
             return false;
         }
+    }
+
+    /**
+     * Check to see if the requested file exists
+     * @return bool
+     */
+    private function _imageExists()
+    {
+        return file_exists(
+            $this->imageDirectory . $this->filename . $this->extension
+        );
     }
 }
