@@ -35,13 +35,13 @@ class DynamicImage
      */
     function __construct()
     {
+        $this->file = null;
         /**
          * Error checking and handling
          */
         if (empty($_GET['filename']) || empty($_GET['width'])
             || empty($_GET['height'])
         ) {
-            echo 'false';
             return;
         }
 
