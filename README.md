@@ -7,7 +7,7 @@ This script has a fully functioning file based cache system which renews when or
 
 At the moment, only `JPG` and `PNG` images are supported.
 
-###Params
+### Params
 `filename` - `required` This is the original image filename including it's extension, for example, `snorkel.jpg`.
 
 `width` - `required` This is the desired width of the image.
@@ -16,7 +16,7 @@ At the moment, only `JPG` and `PNG` images are supported.
 
 `imageDirectory` - This is the directory that all of your original images are held in. This cannot move 'up' through your filesystem to keep the script as a whole more secure. This MUST also end with a trailing slash.
 
-###Example AJAX request to load an image from a seperate domain
+### Example AJAX request to load an image from a seperate domain
 
 Request URL
 
