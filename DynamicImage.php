@@ -1,5 +1,8 @@
 <?php
 
+error_reporting(E_ALL);
+ini_set("display_errors", 1);
+
 /**
  * This script was made to quickly and safely resize images on the fly
  * and cached the generated image so that images added to a site
@@ -31,16 +34,18 @@ class DynamicImage
 {
     /**
      * First function that is called and also the function that calls
-     * all other parts of this file
+     * all other parts of this file.
+     * 
+     * User supplies array of parameters.
      */
-    function __construct()
+    function __construct(Array $params = [])
     {
         $this->file = null;
         /**
          * Error checking and handling
          */
-        if (empty($_GET['filename']) || empty($_GET['width'])
-            || empty($_GET['height'])
+        if (empty($params['filename']) || empty($params['width'])
+            || empty($params['height'])
         ) {
             return;
         }
@@ -49,21 +54,21 @@ class DynamicImage
          * Store the filename, width, height and image directory and then check the
          * cache to see if this file already exists
          */
-        $finalPeriod = strrpos($_GET['filename'], '.');
+        $finalPeriod = strrpos($params['filename'], '.');
         //Don't allow '..' to prevent directory traversal
-        $cleanFilename = str_replace('..', '', $_GET['filename']);
+        $cleanFilename = str_replace('..', '', $params['filename']);
         $this->filename = substr($cleanFilename, 0, $finalPeriod);
         $this->extension = substr($cleanFilename, $finalPeriod);
 
-        $this->width = $_GET['width'];
-        $this->height = $_GET['height'];
+        $this->width = $params['width'];
+        $this->height = $params['height'];
 
         /**
          * This MUST end with a trailing slash
          */
-        if (!empty($_GET['imageDirectory'])) {
+        if (!empty($params['imageDirectory'])) {
             //Don't allow '..' to prevent directory traversal
-            $this->imageDirectory = str_replace('..', '', $_GET['imageDirectory']);
+            $this->imageDirectory = str_replace('..', '', $params['imageDirectory']);
         } else {
             $this->imageDirectory = null;
         }
