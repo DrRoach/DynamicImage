@@ -1,20 +1,23 @@
 # DynamicImage
 Create dynamically sized images on the fly so that they don't need to be resized when added or uploaded.
 
-The aim of this script is to create images of any size as quickly and efficiently as possible so that different sized images don't need to be created whenever you want to add a image to your site or a user uploads a image to your site. The advantage of this is that you will always have the image size that you want even if you need a new required image size half way through a project.
+The goal of this script is to allow images to be generated on the fly to any size. This is done by using PHPs imagick libraries to creating images in a fraction of a second.
 
-This script has a fully functioning file based cache system which renews when original images are updated. It is also 100% secure as it doesn't make use of `eval()` or any other potentially evil functions.
+This script has a fully functioning file based cache system which renews when original images are updated. Images are generated to scale and generated to high resolution. There is also support for images that are hosted on seperate endpoints.
 
 At the moment, only `JPG` and `PNG` images are supported.
 
 ### Params
-`filename` - `required` This is the original image filename including it's extension, for example, `snorkel.jpg`.
+
+The parameters are expected as a `key`, `value` array and passed when the object is created.
+
+`filename` - `required` This is the original image filename including it's extension, for example, `snorkel.jpg`. This image can be of any size any will be rendered in near perferct resolution.
 
 `width` - `required` This is the desired width of the image.
 
 `height` - `required` This is the desired height of the image.
 
-`imageDirectory` - This is the directory that all of your original images are held in. This cannot move 'up' through your filesystem to keep the script as a whole more secure. This MUST also end with a trailing slash.
+`imageDirectory` - This is the directory that all of your original images are held in. This cannot move 'up' through your filesystem to keep the script as a whole, more secure. This MUST also end with a trailing slash.
 
 ### Example AJAX request to load an image from a seperate domain
 
@@ -25,7 +28,14 @@ Request URL
 loadimage.php
 ```PHP
 require_once 'DynamicImage.php';
-$DI = new DynamicImage();
+
+$settings = [
+    'filename' => $_GET['filename'],
+    'width' => $_GET['width'],
+    'height' => $_GET['height']
+];
+
+$DI = new DynamicImage($settings);
 echo json_encode($DI->file);
 exit
 ?>
@@ -35,3 +45,7 @@ HTML
 ```HTML
 <img src="<?=$DI->file?>">
 ```
+
+### Potential Issues
+
+Make sure that your cache folder is writable and that the apache user has permission to write on your machine. Usually user `www-data`.
