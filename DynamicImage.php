@@ -58,8 +58,6 @@ class DynamicImage
             ini_set("display_errors", 1);
         }
 
-        echo $error;
-
         /**
          * Error checking and handling
          */
