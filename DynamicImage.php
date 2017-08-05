@@ -32,6 +32,21 @@ ini_set("display_errors", 1);
  */
 class DynamicImage
 {
+    // File that is used by the user
+    public $file = null;
+
+    // The name of the image that is to be generated
+    private $filename = null;
+    // Extention of the image that is to be generated
+    private $extension = null;
+    // The width and height of the image that is to be generated
+    private $width = 0;
+    private $height = 0;
+    // The directory holding the images if they aren't in the same folder as this
+    private $imageDirectory = null;
+    // The cached version of the generated file
+    private $cachedFilename = null;
+
     /**
      * First function that is called and also the function that calls
      * all other parts of this file.
@@ -40,7 +55,6 @@ class DynamicImage
      */
     function __construct(Array $params = [])
     {
-        $this->file = null;
         /**
          * Error checking and handling
          */
@@ -69,8 +83,6 @@ class DynamicImage
         if (!empty($params['imageDirectory'])) {
             //Don't allow '..' to prevent directory traversal
             $this->imageDirectory = str_replace('..', '', $params['imageDirectory']);
-        } else {
-            $this->imageDirectory = null;
         }
 
         $this->cachedFilename = $this->filename . $this->width . 'x'
@@ -115,6 +127,7 @@ class DynamicImage
         default:
             return;
         }
+
         /**
          * Create new image resource
          */
