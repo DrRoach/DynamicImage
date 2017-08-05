@@ -71,11 +71,10 @@ class DynamicImage
          * Store the filename, width, height and image directory and then check the
          * cache to see if this file already exists
          */
-        $finalPeriod = strrpos($params['filename'], '.');
         //Don't allow '..' to prevent directory traversal
         $cleanFilename = str_replace('..', '', $params['filename']);
-        $this->filename = substr($cleanFilename, 0, $finalPeriod);
-        $this->extension = substr($cleanFilename, $finalPeriod);
+        $this->filename = $this->getFilename($cleanFilename);
+        $this->extension = $this->getExtension($cleanFilename);
 
         $this->width = $params['width'];
         $this->height = $params['height'];
@@ -95,7 +94,16 @@ class DynamicImage
          * Check to see if the requested image exists
          */
         if ($this->_imageExists() === false) {
-            return;
+            // Check to see if `image_missing` is set
+            if (!empty($params['image_missing'])) {
+                // Requested image couldn't be found. Instead load the `image_missing` one.
+                
+                $cleanFilename = str_replace('..', '', $params['image_missing']);
+                $this->filename = $this->getFilename($cleanFilename);
+                $this->extension = $this->getExtension($cleanFilename);
+            } else {
+                return;
+            }
         }
 
         /**
@@ -154,6 +162,30 @@ class DynamicImage
 
         $this->file = 'cache/' . $this->cachedFilename;
         return;
+    }
+
+    /**
+     * Get the name of the file from it's whole path
+     *
+     * @param $file - The whole file path.
+     *
+     * @return $filename - The name of the file taken from the whole file path.
+     */
+    private function getFilename($file) {
+        $finalPeriod = strrpos($file, '.');
+        return substr($file, 0, $finalPeriod);
+    }
+
+    /**
+     * Get the image extension from the path that's been supplied
+     *
+     * @param $file - The whole requested file path
+     *
+     * @return $extension - The requested files' extension
+     */
+    private function getExtension($file) {
+        $finalPeriod = strrpos($file, '.');
+        return substr($file, $finalPeriod);
     }
 
     /**

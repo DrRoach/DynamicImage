@@ -21,6 +21,8 @@ The parameters are expected as a `key`, `value` array and passed when the object
 
 `debug` - If you wish for errors to be turned on, then you can set this to `true` to display any errors that may be occuring.
 
+`image_missing` - If the requested image isn't found then this image is returned instead. This means that you never get a blank response and there's always something that you can display.
+
 ### Example AJAX request to load an image from a seperate domain
 
 Request URL
