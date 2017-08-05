@@ -1,8 +1,5 @@
 <?php
 
-error_reporting(E_ALL);
-ini_set("display_errors", 1);
-
 /**
  * This script was made to quickly and safely resize images on the fly
  * and cached the generated image so that images added to a site
@@ -55,6 +52,14 @@ class DynamicImage
      */
     function __construct(Array $params = [])
     {
+        // If `debug` is set to true in the parameters, turn on errors
+        if (!empty($params['debug']) && $params['debug'] == true) {
+            error_reporting(E_ALL);
+            ini_set("display_errors", 1);
+        }
+
+        echo $error;
+
         /**
          * Error checking and handling
          */

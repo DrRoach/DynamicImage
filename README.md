@@ -19,6 +19,8 @@ The parameters are expected as a `key`, `value` array and passed when the object
 
 `imageDirectory` - This is the directory that all of your original images are held in. This cannot move 'up' through your filesystem to keep the script as a whole, more secure. This MUST also end with a trailing slash.
 
+`debug` - If you wish for errors to be turned on, then you can set this to `true` to display any errors that may be occuring.
+
 ### Example AJAX request to load an image from a seperate domain
 
 Request URL
