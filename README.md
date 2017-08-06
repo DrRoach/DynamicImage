@@ -25,6 +25,8 @@ The parameters are expected as a `key`, `value` array and passed when the object
 
 `exceptions` - Parameter to set whether or not you wish for exceptions to be thrown by the script. The default value is `false` so if you want exceptions to be thrown then you must set this to `true` when creating the object.
 
+`validate_image` - Flag to indicate whether or not you want to check for the requested images' existance before looking to see if the image exists in cache. This means that if the image gets updated after it's been saved to cache then the image wont be regenerated. By default this is set to `true`.
+
 ### Example AJAX request to load an image from a seperate domain
 
 Request URL

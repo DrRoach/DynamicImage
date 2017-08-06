@@ -45,6 +45,8 @@ class DynamicImage
     private $imageDirectory = null;
     // The cached version of the generated file
     private $cachedFilename = null;
+    // Flag to skip image validation and just load it straight from cache if it exists
+    private $validateImage = true;
 
     // Setting to determine whether or not exceptions should be thrown
     private $exceptions = false;
@@ -116,6 +118,17 @@ class DynamicImage
         $this->cachedFilename = $this->filename . '-' . $this->width . 'x'
             . $this->height . $this->extension;
 
+        // If the user has set `validate_image` to false then check the cache straight away
+        if (!empty($params['validate_image']) && $params['validate_image'] == false) {
+            $this->validate_image = false;
+            // Check the cache for the image but don't validate it
+            $cached = $this->checkCache($validate = false);
+            if ($cached !== false) {
+                $this->file = $cached;
+                return;
+            }
+        }
+
         /**
          * Check to see if the requested image exists
          */
@@ -135,12 +148,15 @@ class DynamicImage
 
         /**
          * Check to see if the requested image is cached, if it is, then
-         * echo it to the page and return
+         * echo it to the page and return. We only want to run this if `validate_image` was set to
+         * true, hence the if block. If it is set to false then the cache has already been checked.
          */
-        $cached = $this->_checkCache();
-        if ($cached !== false) {
-            $this->file = $cached;
-            return;
+        if ($this->validateImage) {
+            $cached = $this->_checkCache();
+            if ($cached !== false) {
+                $this->file = $cached;
+                return;
+            }
         }
 
         /**
@@ -221,9 +237,12 @@ class DynamicImage
      * then it checks to see if it is newer that the original
      * image, if it isn't then it deletes the cached version of
      * the image
+     *
+     * @param $validate Whether or not to validate that the original image hasn't been updated since cache file was made
+     *
      * @return bool|string
      */
-    private function _checkCache()
+    private function _checkCache($validate = true)
     {
         /**
          * Check to see if the cache folder exists, if not, create it
@@ -242,11 +261,11 @@ class DynamicImage
         if (file_exists('cache/' . $this->cachedFilename)) {
 
             /**
-             * Check to see if original is newer than the cache image, if it is,
-             * assume the image has been changed so delete the cached version
+             * Check to see if original is newer than the cache image, as long as validate is set to true. 
+             * If it is, assume the image has been changed so delete the cached version
              * and return false
              */
-            if (filemtime('cache/' . $this->cachedFilename) < filemtime($this->imageDirectory . $this->filename . $this->extension)) {
+            if ($validate == true && filemtime('cache/' . $this->cachedFilename) < filemtime($this->imageDirectory . $this->filename . $this->extension)) {
                 unlink('cache/' . $this->cachedFilename);
                 return false;
             }
