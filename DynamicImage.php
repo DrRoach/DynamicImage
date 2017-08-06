@@ -31,6 +31,8 @@ class DynamicImage
 {
     // File that is used by the user
     public $file = null;
+    // If an error has occured then this will be set to true
+    public $error = false;
 
     // The name of the image that is to be generated
     private $filename = null;
@@ -43,6 +45,24 @@ class DynamicImage
     private $imageDirectory = null;
     // The cached version of the generated file
     private $cachedFilename = null;
+
+    // Setting to determine whether or not exceptions should be thrown
+    private $exceptions = false;
+    // Array that contains all of the error codes and messages
+    private $_ERRORS = [
+        'MISSING_PARAM' => [
+            'code' => 1,
+            'message' => 'You are missing one of the required parameters.'
+        ],
+        'IMAGE_MISSING' => [
+            'code' => 2,
+            'message' => 'The image that you requested to generate could not be found.'
+        ],
+        'UNSUPPORTED_EXTENSION' => [
+            'code' => 3,
+            'message' => 'The filetype that you gave isn\'t supported.'
+        ]
+    ];
 
     /**
      * First function that is called and also the function that calls
@@ -58,12 +78,18 @@ class DynamicImage
             ini_set("display_errors", 1);
         }
 
+        // If `exceptions` is set in parameters then set it for this class
+        if (!empty($params['exceptions'])) {
+            $this->exceptions = $params['exceptions'];
+        }
+
         /**
          * Error checking and handling
          */
         if (empty($params['filename']) || empty($params['width'])
             || empty($params['height'])
         ) {
+            $this->error($this->_ERRORS['MISSING_PARAM']['message'], $this->_ERRORS['MISSING_PARAM']['code']);
             return;
         }
 
@@ -102,6 +128,7 @@ class DynamicImage
                 $this->filename = $this->getFilename($cleanFilename);
                 $this->extension = $this->getExtension($cleanFilename);
             } else {
+                $this->error($this->_ERRORS['IMAGE_MISSING']['message'], $this->_ERRORS['IMAGE_MISSING']['code']);
                 return;
             }
         }
@@ -136,6 +163,7 @@ class DynamicImage
             );
             break;
         default:
+            $this->error($this->_ERRORS['UNSUPPORTED_EXTENSION']['message'], $this->_ERRORS['UNSUPPORTED_EXTENSION']['code']);
             return;
         }
 
@@ -206,11 +234,13 @@ class DynamicImage
             mkdir('cache');
             return false;
         }
+
         /**
          * Check to see if the requested file exists, if it does, then
          * return it's full path else return false
          */
         if (file_exists('cache/' . $this->cachedFilename)) {
+
             /**
              * Check to see if original is newer than the cache image, if it is,
              * assume the image has been changed so delete the cached version
@@ -220,8 +250,11 @@ class DynamicImage
                 unlink('cache/' . $this->cachedFilename);
                 return false;
             }
+
+            // Else return the cached image
             return 'cache/' . $this->cachedFilename;
         } else {
+            // File doesn't exist in the cache
             return false;
         }
     }
@@ -235,5 +268,14 @@ class DynamicImage
         return file_exists(
             $this->imageDirectory . $this->filename . $this->extension
         );
+    }
+
+    private function error($message, $code = 0) {
+        $this->error = true;
+
+        // Only throw the exception if exceptions have been set to true
+        if ($this->exceptions) {
+            throw new Exception($message, $code);
+        }
     }
 }

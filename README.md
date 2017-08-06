@@ -23,6 +23,8 @@ The parameters are expected as a `key`, `value` array and passed when the object
 
 `image_missing` - If the requested image isn't found then this image is returned instead. This means that you never get a blank response and there's always something that you can display.
 
+`exceptions` - Parameter to set whether or not you wish for exceptions to be thrown by the script. The default value is `false` so if you want exceptions to be thrown then you must set this to `true` when creating the object.
+
 ### Example AJAX request to load an image from a seperate domain
 
 Request URL
