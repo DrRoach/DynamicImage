@@ -113,7 +113,7 @@ class DynamicImage
             $this->imageDirectory = str_replace('..', '', $params['imageDirectory']);
         }
 
-        $this->cachedFilename = $this->filename . $this->width . 'x'
+        $this->cachedFilename = $this->filename . '-' . $this->width . 'x'
             . $this->height . $this->extension;
 
         /**
