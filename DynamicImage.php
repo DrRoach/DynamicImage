@@ -63,6 +63,14 @@ class DynamicImage
         'UNSUPPORTED_EXTENSION' => [
             'code' => 3,
             'message' => 'The filetype that you gave isn\'t supported.'
+        ],
+        'CREATING_CACHE' => [
+            'code' => 4,
+            'message' => 'There was a problem when creating the `cache` directory. Please create it manually.'
+        ],
+        'INVALID_PERMISSIONS' => [
+            'code' => 5,
+            'message' => 'The cache folder cannot be written to. Please make sure that it has the correct permissions.'
         ]
     ];
 
@@ -157,6 +165,12 @@ class DynamicImage
                 $this->file = $cached;
                 return;
             }
+        } 
+
+        // Check to make sure that the cache is writable before trying to save to it
+        if (!is_writable('cache')) {
+            $this->error($this->_ERRORS['INVALID_PERMISSIONS']['message'], $this->_ERRORS['INVALID_PERMISSIONS']['code']);
+            return;
         }
 
         /**
@@ -250,8 +264,14 @@ class DynamicImage
          * exist
          */
         if (is_dir('cache') === false) {
-            mkdir('cache');
-            return false;
+            // If cache is writable and the cache directory is made return false
+            if (is_writable('cache') && mkdir('cache')) {
+                return false;
+            } else {
+                // Cache dir couldn't be made so display error
+                $this->error($this->_ERRORS['CREATING_CACHE']['message'], $this->_ERRORS['CREATING_CACHE']['code']);
+                return;
+            }
         }
 
         /**
