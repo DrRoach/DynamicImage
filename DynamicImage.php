@@ -155,6 +155,10 @@ class DynamicImage
                 $cleanFilename = str_replace('..', '', $params['image_missing']);
                 $this->filename = $this->getFilename($cleanFilename);
                 $this->extension = $this->getExtension($cleanFilename);
+
+                //Make sure that we update the cache filename so that it isn't saved with the wrong name
+                $this->cachedFilename = $this->filename . '-' . $this->width . 'x'
+                    . $this->height . $this->extension;
             } else {
                 $this->error($this->_ERRORS['IMAGE_MISSING']['message'], $this->_ERRORS['IMAGE_MISSING']['code']);
                 return;
