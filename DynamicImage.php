@@ -11,13 +11,13 @@
  * @package  DynamicImage
  * @author   Ryan Deas <ryandeas1@gmail.com>
  * @license  MIT 2
- * @link     http://google.com
  */
 
 /**
  * Class DynamicImage
  *
- * Returns either the resized image filename or false
+ * Returns either the resized image filename or throws an exception if `exceptions` is set to true. If it isn't
+ *  set to true then the script will just return.
  *
  * PHP version 5.4
  *
@@ -31,7 +31,7 @@ class DynamicImage
 {
     // File that is used by the user
     public $file = null;
-    // If an error has occured then this will be set to true
+    // Error variable that is set to true if something goes wrong
     public $error = false;
 
     // The name of the image that is to be generated
@@ -41,13 +41,13 @@ class DynamicImage
     // The width and height of the image that is to be generated
     private $width = 0;
     private $height = 0;
-    // The directory holding the images if they aren't in the same folder as this
+    // The directory holding the images if they aren't in the same folder as this script
     private $imageDirectory = null;
     // The cached version of the generated file
     private $cachedFilename = null;
-    // Flag to skip image validation and just load it straight from cache if it exists
+    // Flag to skip image validation and just load it straight from cache if it exists. To do this, this should be set to `false`.
     private $validateImage = true;
-    // Cache invalidation in seconds. If null then don't validate
+    // Cache invalidation in seconds. If null then don't validate the image, assume it is correct
     private $invalidateSeconds = null;
 
     // Setting to determine whether or not exceptions should be thrown
@@ -95,9 +95,7 @@ class DynamicImage
             $this->exceptions = $params['exceptions'];
         }
 
-        /**
-         * Error checking and handling
-         */
+        // Check to make sure that all required params are given
         if (empty($params['filename']) || empty($params['width'])
             || empty($params['height'])
         ) {
@@ -105,21 +103,17 @@ class DynamicImage
             return;
         }
 
-        /**
-         * Store the filename, width, height and image directory and then check the
-         * cache to see if this file already exists
-         */
-        //Don't allow '..' to prevent directory traversal
+        // Don't allow '..' to prevent directory traversal
         $cleanFilename = str_replace('..', '', $params['filename']);
+        // Get the filename and extension to be generated
         $this->filename = $this->getFilename($cleanFilename);
         $this->extension = $this->getExtension($cleanFilename);
 
+        // Get the width and height of the image to be generated
         $this->width = $params['width'];
         $this->height = $params['height'];
 
-        /**
-         * This MUST end with a trailing slash
-         */
+        // This MUST end with a trailing slash
         if (!empty($params['image_directory'])) {
             //Don't allow '..' to prevent directory traversal
             $this->imageDirectory = str_replace('..', '', $params['image_directory']);
@@ -130,29 +124,33 @@ class DynamicImage
             $this->invalidateSeconds = $params['invalidate_cache'];
         }
 
+        // Generate the name of the file that would exist in cache
         $this->cachedFilename = $this->filename . '-' . $this->width . 'x'
             . $this->height . $this->extension;
 
         // If the user has set `validate_image` to false then check the cache straight away
         if (!empty($params['validate_image']) && $params['validate_image'] == false) {
+            // We're checking the cache now so set flag not to check it later
             $this->validate_image = false;
+
             // Check the cache for the image but don't validate it
             $cached = $this->checkCache($validate = false);
+
+            // If a file exists in the cache store it and return
             if ($cached !== false) {
                 $this->file = $cached;
                 return;
             }
         }
 
-        /**
-         * Check to see if the requested image exists
-         */
+        // Check to see if the requested image exists
         if ($this->_imageExists() === false) {
             // Check to see if `image_missing` is set
             if (!empty($params['image_missing'])) {
                 // Requested image couldn't be found. Instead load the `image_missing` one.
-                
                 $cleanFilename = str_replace('..', '', $params['image_missing']);
+
+                // Store the filename and extension for the missing image
                 $this->filename = $this->getFilename($cleanFilename);
                 $this->extension = $this->getExtension($cleanFilename);
 
@@ -170,8 +168,11 @@ class DynamicImage
          * echo it to the page and return. We only want to run this if `validate_image` was set to
          * true, hence the if block. If it is set to false then the cache has already been checked.
          */
+        // Check to see if requested image is cached. If it is then store it and reurn.
         if ($this->validateImage) {
             $cached = $this->_checkCache();
+
+            // If `_checkCache()` didn't return false then image exists in there
             if ($cached !== false) {
                 $this->file = $cached;
                 return;
@@ -184,11 +185,9 @@ class DynamicImage
             return;
         }
 
-        /**
-         * No cached image exists, create it
-         *
-         * Check to see if the image is a jpg or png
-         */
+        // No cached image exists so we need to create one
+        
+        // Check what method we need to use to save image using filetype
         switch($this->extension) {
         case '.png':
             $image = imagecreatefrompng(
@@ -208,17 +207,16 @@ class DynamicImage
             return;
         }
 
-        /**
-         * Create new image resource
-         */
+        // Create new image resource
         $newImage = imagecreatetruecolor($this->width, $this->height);
+
+        // Copy old image over new
         imagecopyresampled(
             $newImage, $image, 0, 0, 0, 0, $this->width,
             $this->height, imagesx($image), imagesy($image)
         );
-        /**
-         * Save the new image as the correct filetype
-         */
+        
+        // Save the new image as the correct filetype
         switch($this->extension) {
         case '.png':
             imagepng($newImage, 'cache/' . $this->cachedFilename);
@@ -229,6 +227,7 @@ class DynamicImage
             break;
         }
 
+        // Store the image and return
         $this->file = 'cache/' . $this->cachedFilename;
         return;
     }
@@ -241,7 +240,10 @@ class DynamicImage
      * @return $filename - The name of the file taken from the whole file path.
      */
     private function getFilename($file) {
+        // Get position of the final `.`
         $finalPeriod = strrpos($file, '.');
+
+        // Return everyting up to the final `.`
         return substr($file, 0, $finalPeriod);
     }
 
@@ -253,7 +255,10 @@ class DynamicImage
      * @return $extension - The requested files' extension
      */
     private function getExtension($file) {
+        // Get position of final `.`
         $finalPeriod = strrpos($file, '.');
+
+        // Return everything after the final `.`
         return substr($file, $finalPeriod);
     }
 
@@ -269,11 +274,7 @@ class DynamicImage
      */
     private function _checkCache($validate = true)
     {
-        /**
-         * Check to see if the cache folder exists, if not, create it
-         * and then return false because the cached image can't yet
-         * exist
-         */
+        // Check to see if cache folder exists if it doesn't try and create it then return
         if (is_dir('cache') === false) {
             // If cache is writable and the cache directory is made return false
             if (is_writable('cache') && mkdir('cache')) {
@@ -285,24 +286,17 @@ class DynamicImage
             }
         }
 
-        /**
-         * Check to see if the requested file exists, if it does, then
-         * return it's full path else return false
-         */
+        // Check to make sure that requested file exists. If it does then return it
         if (file_exists('cache/' . $this->cachedFilename)) {
             $date = new DateTime();
 
-            /**
-             * Check to see if original is newer than the cache image, as long as validate is set to true. 
-             * If it is, assume the image has been changed so delete the cached version
-             * and return false
-             */
+            // Check to see if validate is set to true and original image is newer than cached image
             if ($validate == true && filemtime('cache/' . $this->cachedFilename) < filemtime($this->imageDirectory . $this->filename . $this->extension)) {
                 // Image has been updated so make sure that we re-generate it
                 unlink('cache/' . $this->cachedFilename);
                 return false;
+            // Check to see if `invalidate_cache` has been set and if cache file is still valid
             } else if (!is_null($this->invalidateSeconds) && (filemtime('cache/' . $this->cachedFilename) + $this->invalidateSeconds) < $date->getTimestamp()) {
-                var_dump('IN HERE NOW');
                 // Cached image has passed validation time so re-generate it
                 unlink('cache/' . $this->cachedFilename);
                 return false;
