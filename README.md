@@ -27,6 +27,8 @@ The parameters are expected as a `key`, `value` array and passed when the object
 
 `validate_image` - Flag to indicate whether or not you want to check for the requested images' existance before looking to see if the image exists in cache. This means that if the image gets updated after it's been saved to cache then the image wont be regenerated. By default this is set to `true`.
 
+`invalidate_cache` - Parameter to set whether or not the cache image should be invalidated after x amount of seconds. This means you can re-generate cache images every day for example.
+
 ### Example AJAX request to load an image from a seperate domain
 
 Request URL

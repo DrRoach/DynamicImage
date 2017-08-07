@@ -47,6 +47,8 @@ class DynamicImage
     private $cachedFilename = null;
     // Flag to skip image validation and just load it straight from cache if it exists
     private $validateImage = true;
+    // Cache invalidation in seconds. If null then don't validate
+    private $invalidateSeconds = null;
 
     // Setting to determine whether or not exceptions should be thrown
     private $exceptions = false;
@@ -121,6 +123,11 @@ class DynamicImage
         if (!empty($params['imageDirectory'])) {
             //Don't allow '..' to prevent directory traversal
             $this->imageDirectory = str_replace('..', '', $params['imageDirectory']);
+        }
+
+        // Check to see if `invalidate_cache` has been set and if it has store it
+        if (!empty($params['invalidate_cache'])) {
+            $this->invalidateSeconds = $params['invalidate_cache'];
         }
 
         $this->cachedFilename = $this->filename . '-' . $this->width . 'x'
@@ -279,6 +286,7 @@ class DynamicImage
          * return it's full path else return false
          */
         if (file_exists('cache/' . $this->cachedFilename)) {
+            $date = new DateTime();
 
             /**
              * Check to see if original is newer than the cache image, as long as validate is set to true. 
@@ -286,6 +294,12 @@ class DynamicImage
              * and return false
              */
             if ($validate == true && filemtime('cache/' . $this->cachedFilename) < filemtime($this->imageDirectory . $this->filename . $this->extension)) {
+                // Image has been updated so make sure that we re-generate it
+                unlink('cache/' . $this->cachedFilename);
+                return false;
+            } else if (!is_null($this->invalidateSeconds) && (filemtime('cache/' . $this->cachedFilename) + $this->invalidateSeconds) < $date->getTimestamp()) {
+                var_dump('IN HERE NOW');
+                // Cached image has passed validation time so re-generate it
                 unlink('cache/' . $this->cachedFilename);
                 return false;
             }
