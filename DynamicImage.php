@@ -120,9 +120,9 @@ class DynamicImage
         /**
          * This MUST end with a trailing slash
          */
-        if (!empty($params['imageDirectory'])) {
+        if (!empty($params['image_directory'])) {
             //Don't allow '..' to prevent directory traversal
-            $this->imageDirectory = str_replace('..', '', $params['imageDirectory']);
+            $this->imageDirectory = str_replace('..', '', $params['image_directory']);
         }
 
         // Check to see if `invalidate_cache` has been set and if it has store it
