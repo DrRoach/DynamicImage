@@ -1,0 +1,14 @@
+{
+    "name": "drroach/dynamic-image",
+    "description": "Dynamic image loading script that generates images of the requested size on the fly.",
+    "type": "project",
+    "authors": [
+        {
+            "name": "Ryan Deas",
+            "email": "ryandeas1@gmail.com"
+        }
+    ],
+    "require-dev": {
+        "codeception/codeception": "*"
+    }
+}
