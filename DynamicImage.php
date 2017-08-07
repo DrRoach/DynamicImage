@@ -73,6 +73,10 @@ class DynamicImage
         'INVALID_PERMISSIONS' => [
             'code' => 5,
             'message' => 'The cache folder cannot be written to. Please make sure that it has the correct permissions.'
+        ],
+        'FILE_PERMISSION' => [
+            'code' => 6,
+            'message' => 'The original image doesn\'t have the correct permissions and cannot be generated.'
         ]
     ];
 
@@ -182,6 +186,12 @@ class DynamicImage
         // Check to make sure that the cache is writable before trying to save to it
         if (!is_writable('cache')) {
             $this->error($this->_ERRORS['INVALID_PERMISSIONS']['message'], $this->_ERRORS['INVALID_PERMISSIONS']['code']);
+            return;
+        }
+
+        // Check to make sure that the requested image is writable
+        if (!is_readable($this->imageDirectory . $this->filename . $this->extension)) {
+            $this->error($this->_ERRORS['FILE_PERMISSION']['message'], $this->_ERRORS['FILE_PERMISSION']['code']);
             return;
         }
 
