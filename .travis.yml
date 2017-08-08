@@ -8,5 +8,5 @@ php:
 before_script:
     - composer install
     - mkdir cache
-script: php vendor/bin/codecept run -g main
+script: php vendor/bin/codecept run
 sudo: true
