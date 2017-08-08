@@ -7,5 +7,5 @@ php:
     - 5.6
     - 7.0
     - 7.1
-before_script: composer require drroach/dynamic-image
+before_script: composer install
 script: php vendor/bin/codecept run
