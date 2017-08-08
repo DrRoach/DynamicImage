@@ -119,7 +119,11 @@ class DynamicImageTest extends \Codeception\Test\Unit
         $data = $this->testData;
 
         // Create test image file
-        $fp = fopen(__DIR__ . '/../../test.jpg', 'w');
+        try {
+            $fp = fopen(__DIR__ . '/../../test.jpg', 'w');
+        } catch (Exception $e) {
+            var_dump($e->getMessage());
+        }
 
         // Set incorrect permissions for test file
         chmod(__DIR__ . '/../../test.jpg', 600);
@@ -136,6 +140,8 @@ class DynamicImageTest extends \Codeception\Test\Unit
         $this->assertTrue($error);
 
         unlink(__DIR__ . '/../../test.jpg');
+
+        shell_exec("mkdir cache");
     }
 
     /**
@@ -171,9 +177,10 @@ class DynamicImageTest extends \Codeception\Test\Unit
             $this->assertEquals('There was a problem when creating the `cache` directory. Please create it manually.', $e->getMessage());
 
             $output = new \Codeception\Lib\Console\Output([]);
-            $output->writeln(" The cache directory couldn't be created. Please create it manually.");
         }
 
         $this->assertTrue($error);
+
+        shell_exec("mkdir cache");
     }
 }
