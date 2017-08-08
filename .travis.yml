@@ -7,3 +7,4 @@ php:
     - 7.1
 before_script: composer install
 script: php vendor/bin/codecept run
+sudo: true
