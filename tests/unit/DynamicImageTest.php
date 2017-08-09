@@ -218,8 +218,8 @@ class DynamicImageTest extends \Codeception\Test\Unit
         $di = new DynamicImage($data);
         $end = microtime(true);
 
-        // Check that the function ran in less than 2.5 seconds
-        $this->assertTrue(($start + ($end - $start)) < ($start + 2.5));
+        // Check that the function ran in less than 3 seconds
+        $this->assertTrue(($start + ($end - $start)) < ($start + 3));
 
         $this->deleteImage(__DIR__ . '/../../cache/deadpool-10000x10000.jpg');
 
@@ -232,8 +232,8 @@ class DynamicImageTest extends \Codeception\Test\Unit
         $di = new DynamicImage($data);
         $end = microtime(true);
 
-        // Check that the function ran in less than 7.5 seconds
-        $this->assertTrue(($start + ($end - $start)) < ($start + 7.5));
+        // Check that the function ran in less than 8 seconds
+        $this->assertTrue(($start + ($end - $start)) < ($start + 8));
     }
 
     private function deleteImage($image)
