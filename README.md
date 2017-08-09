@@ -37,6 +37,7 @@ Request URL
 
 loadimage.php
 ```PHP
+<?php
 require_once 'DynamicImage.php';
 
 $settings = [
