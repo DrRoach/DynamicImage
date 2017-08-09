@@ -232,8 +232,8 @@ class DynamicImageTest extends \Codeception\Test\Unit
         $di = new DynamicImage($data);
         $end = microtime(true);
 
-        // Check that the function ran in less than 8 seconds
-        $this->assertTrue(($start + ($end - $start)) < ($start + 8));
+        // Check that the function ran in less than 10 seconds
+        $this->assertTrue(($start + ($end - $start)) < ($start + 10));
     }
 
     private function deleteImage($image)
