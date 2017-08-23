@@ -49,7 +49,7 @@ class DynamicImageTest extends \Codeception\Test\Unit
             $di = new DynamicImage($data);
         } catch(Exception $e) {
             $error = true;
-            $this->assertEquals('You are missing one of the required parameters.', $e->getMessage());
+            $this->assertEquals(1, $e->getCode());
         }
 
         $this->assertTrue($error);
@@ -69,7 +69,7 @@ class DynamicImageTest extends \Codeception\Test\Unit
             $di = new DynamicImage($data);
         } catch(Exception $e) {
             $error = true;
-            $this->assertEquals('The image that you requested to generate could not be found.', $e->getMessage());
+            $this->assertEquals(2, $e->getCode());
         }
 
         $this->assertTrue($error);
@@ -102,7 +102,7 @@ class DynamicImageTest extends \Codeception\Test\Unit
             $di = new DynamicImage($data);
         } catch(Exception $e) {
             $error = true;
-            $this->assertEquals('The filetype that you gave isn\'t supported.', $e->getMessage());
+            $this->assertEquals(3, $e->getCode());
         }
 
         $this->assertTrue($error);
@@ -134,7 +134,7 @@ class DynamicImageTest extends \Codeception\Test\Unit
             $di = new DynamicImage($data);
         } catch (Exception $e) {
             $error = true;
-            $this->assertEquals('The original image doesn\'t have the correct permissions and cannot be generated.', $e->getMessage());
+            $this->assertEquals(6, $e->getCode());
         }
 
         $this->assertTrue($error);
@@ -174,5 +174,22 @@ class DynamicImageTest extends \Codeception\Test\Unit
         $di = new DynamicImage($data);
 
         $this->assertTrue(is_dir($cacheDir));
+    }
+
+    public function testInvalidWidthOrHeight()
+    {
+        $data = $this->testData;
+
+        $data['width'] = 'abc';
+        $error = false;
+
+        try {
+            $di = new DynamicImage($data);
+        } catch (Exception $e) {
+            $error = true;
+            $this->assertEquals($e->getCode(), 7);
+        }
+
+        $this->assertTrue($error);
     }
 }

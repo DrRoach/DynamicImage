@@ -77,6 +77,10 @@ class DynamicImage
         'FILE_PERMISSION' => [
             'code' => 6,
             'message' => 'The original image doesn\'t have the correct permissions and cannot be generated.'
+        ],
+        'INTEGER_REQUIRED' => [
+            'code' => 7,
+            'message' => 'The width and height must both be integer values.'
         ]
     ];
 
@@ -112,6 +116,12 @@ class DynamicImage
         // Get the filename and extension to be generated
         $this->filename = $this->getFilename($cleanFilename);
         $this->extension = $this->getExtension($cleanFilename);
+
+        // Check to make sure both width and height are numbers
+        if (!is_int($params['width']) || !is_int($params['height'])) {
+            $this->error($this->_ERRORS['INTEGER_REQUIRED']['message'], $this->_ERRORS['INTEGER_REQUIRED']['code']);
+            return;
+        }
 
         // Get the width and height of the image to be generated
         $this->width = $params['width'];
