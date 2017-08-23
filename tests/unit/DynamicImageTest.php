@@ -170,17 +170,9 @@ class DynamicImageTest extends \Codeception\Test\Unit
         
         $data = $this->testData;
 
-        try {
-            $di = new DynamicImage($data);
-        } catch (Exception $e) {
-            $error = true;
-            $this->assertEquals('There was a problem when creating the `cache` directory. Please create it manually.', $e->getMessage());
+        // Create new object and make sure that cache is created
+        $di = new DynamicImage($data);
 
-            $output = new \Codeception\Lib\Console\Output([]);
-        }
-
-        $this->assertTrue($error);
-
-        shell_exec("mkdir cache");
+        $this->assertTrue(is_dir($cacheDir));
     }
 }

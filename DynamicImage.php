@@ -287,7 +287,7 @@ class DynamicImage
         // Check to see if cache folder exists if it doesn't try and create it then return
         if (is_dir('cache') === false) {
             // If cache is writable and the cache directory is made return false
-            if (is_writable('cache') && mkdir('cache')) {
+            if (mkdir('cache')) {
                 return false;
             } else {
                 // Cache dir couldn't be made so display error
