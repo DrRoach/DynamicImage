@@ -118,7 +118,7 @@ class DynamicImage
         $this->extension = $this->getExtension($cleanFilename);
 
         // Check to make sure both width and height are numbers
-        if (!is_int($params['width']) || !is_int($params['height'])) {
+        if (!is_numeric($params['width']) || !is_numeric($params['height'])) {
             $this->error($this->_ERRORS['INTEGER_REQUIRED']['message'], $this->_ERRORS['INTEGER_REQUIRED']['code']);
             return;
         }
