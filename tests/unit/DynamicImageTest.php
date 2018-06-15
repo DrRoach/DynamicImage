@@ -1,5 +1,7 @@
 <?php
 
+use DynamicImage\DynamicImage;
+
 class DynamicImageTest extends \Codeception\Test\Unit
 {
     /**
@@ -13,13 +15,13 @@ class DynamicImageTest extends \Codeception\Test\Unit
         'filename' => 'deadpool.jpg',
         'exceptions' => true,
         'debug' => false,
-        'invalidate_cache' => 0
+        'invalidate_cache' => 0,
+        'image_directory' => 'images/'
     ];
 
     protected function _before()
     {
-        var_dump(__DIR__);
-        require_once __DIR__ . '/../../DynamicImage.php';
+        require_once __DIR__ . '/../../src/DynamicImage.php';
     }
 
     protected function _after()
@@ -120,13 +122,13 @@ class DynamicImageTest extends \Codeception\Test\Unit
 
         // Create test image file
         try {
-            $fp = fopen(__DIR__ . '/../../test.jpg', 'w');
+            $fp = fopen(__DIR__ . '/../../' . $this->testData['image_directory'] . 'test.jpg', 'w');
         } catch (Exception $e) {
             var_dump($e->getMessage());
         }
 
         // Set incorrect permissions for test file
-        chmod(__DIR__ . '/../../test.jpg', 600);
+        chmod(__DIR__ . '/../../' . $this->testData['image_directory'] . 'test.jpg', 600);
 
         $data['filename'] = 'test.jpg';
 
@@ -139,7 +141,7 @@ class DynamicImageTest extends \Codeception\Test\Unit
 
         $this->assertTrue($error);
 
-        unlink(__DIR__ . '/../../test.jpg');
+        unlink(__DIR__ . '/../../' . $this->testData['image_directory'] . 'test.jpg');
 
         shell_exec("mkdir cache");
     }
