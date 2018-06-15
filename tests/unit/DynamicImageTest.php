@@ -1,6 +1,5 @@
 <?php
 
-
 class DynamicImageTest extends \Codeception\Test\Unit
 {
     /**
@@ -19,6 +18,7 @@ class DynamicImageTest extends \Codeception\Test\Unit
 
     protected function _before()
     {
+        var_dump(__DIR__);
         require_once __DIR__ . '/../../DynamicImage.php';
     }
 
@@ -155,6 +155,8 @@ class DynamicImageTest extends \Codeception\Test\Unit
         // Directory of the cache
         $cacheDir = __dir__ . '/../../cache';
 
+        var_dump($cacheDir);
+
         // If the cache directory exists then delete it
         if (is_dir($cacheDir)) {
             // Delete all image file that are in the cache directory
@@ -164,8 +166,8 @@ class DynamicImageTest extends \Codeception\Test\Unit
                 }
             }
 
-            // Delete the cache folder
             rmdir($cacheDir);
+            echo "CACHE DELETED\n";
         }
         
         $data = $this->testData;

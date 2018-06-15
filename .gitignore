@@ -1,0 +1,5 @@
+images/
+cache/
+tests/_support/
+tests/_output/
+vendor/

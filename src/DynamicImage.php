@@ -1,5 +1,7 @@
 <?php
 
+namespace DynamicImage;
+
 /**
  * This script was made to quickly and safely resize images on the fly
  * and cached the generated image so that images added to a site
