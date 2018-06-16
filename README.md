@@ -39,6 +39,7 @@ Request URL
 
 loadimage.php
 ```PHP
+<?php
 require_once 'DynamicImage.php';
 
 $settings = [
@@ -49,13 +50,13 @@ $settings = [
 
 $DI = new DynamicImage($settings);
 echo json_encode($DI->file);
-exit
+;
 ?>
 ```
 
 HTML
 ```HTML
-<img src="<?=$DI->file?>">
+<img src="<?=$DI->file;?>">
 ```
 
 ### Potential Issues
