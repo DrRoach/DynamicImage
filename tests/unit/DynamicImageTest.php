@@ -51,7 +51,7 @@ class DynamicImageTest extends \Codeception\Test\Unit
             $di = new DynamicImage($data);
         } catch(Exception $e) {
             $error = true;
-            $this->assertEquals(1, $e->getCode());
+            $this->assertEquals(DynamicImage::$_ERRORS['MISSING_PARAM']['code'], $e->getCode());
         }
 
         $this->assertTrue($error);
@@ -71,7 +71,7 @@ class DynamicImageTest extends \Codeception\Test\Unit
             $di = new DynamicImage($data);
         } catch(Exception $e) {
             $error = true;
-            $this->assertEquals(2, $e->getCode());
+            $this->assertEquals(DynamicImage::$_ERRORS['IMAGE_MISSING']['code'], $e->getCode());
         }
 
         $this->assertTrue($error);
@@ -98,13 +98,13 @@ class DynamicImageTest extends \Codeception\Test\Unit
         $error = false;
 
         $data = $this->testData;
-        $data['filename'] = 'surf.gif';
+        $data['filename'] = 'invalid.tiff';
 
         try {
             $di = new DynamicImage($data);
         } catch(Exception $e) {
             $error = true;
-            $this->assertEquals(3, $e->getCode());
+            $this->assertEquals(DynamicImage::$_ERRORS['UNSUPPORTED_EXTENSION']['code'], $e->getCode());
         }
 
         $this->assertTrue($error);
@@ -132,18 +132,17 @@ class DynamicImageTest extends \Codeception\Test\Unit
 
         $data['filename'] = 'test.jpg';
 
+        $di = null;
         try {
             $di = new DynamicImage($data);
         } catch (Exception $e) {
             $error = true;
-            $this->assertEquals(6, $e->getCode());
+            $this->assertEquals(DynamicImage::$_ERRORS['FILE_PERMISSION']['code'], $e->getCode());
         }
 
         $this->assertTrue($error);
 
         unlink(__DIR__ . '/../../' . $this->testData['image_directory'] . 'test.jpg');
-
-        shell_exec("mkdir cache");
     }
 
     /**
@@ -188,7 +187,7 @@ class DynamicImageTest extends \Codeception\Test\Unit
             $di = new DynamicImage($data);
         } catch (Exception $e) {
             $error = true;
-            $this->assertEquals($e->getCode(), 7);
+            $this->assertEquals(DynamicImage::$_ERRORS['INTEGER_REQUIRED']['code'], $e->getCode());
         }
 
         $this->assertTrue($error);
@@ -200,7 +199,7 @@ class DynamicImageTest extends \Codeception\Test\Unit
 
         $di = new DynamicImage($data);
 
-        $this->assertEquals(2, exif_imagetype($di->file));
+        $this->assertEquals(IMAGETYPE_JPEG, exif_imagetype($di->file));
     }
 
     public function testPngImageCreation()
@@ -211,6 +210,17 @@ class DynamicImageTest extends \Codeception\Test\Unit
 
         $di = new DynamicImage($data);
 
-        $this->assertEquals(3, exif_imagetype($di->file));
+        $this->assertEquals(IMAGETYPE_PNG, exif_imagetype($di->file));
+    }
+
+    public function testGifImageCreation()
+    {
+        $data = $this->testData;
+
+        $data['filename'] = "surf.gif";
+
+        $di = new DynamicImage($data);
+
+        $this->assertEquals(IMAGETYPE_GIF, exif_imagetype($di->file));
     }
 }

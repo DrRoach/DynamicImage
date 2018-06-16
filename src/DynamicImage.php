@@ -4,6 +4,7 @@ namespace DynamicImage;
 
 use Exception;
 use DateTime;
+use Imagick;
 
 /**
  * This script was made to quickly and safely resize images on the fly
@@ -58,7 +59,7 @@ class DynamicImage
     // Setting to determine whether or not exceptions should be thrown
     private $exceptions = false;
     // Array that contains all of the error codes and messages
-    private $_ERRORS = [
+    public static $_ERRORS = [
         'MISSING_PARAM' => [
             'code' => 1,
             'message' => 'You are missing one of the required parameters.'
@@ -112,7 +113,7 @@ class DynamicImage
         if (empty($params['filename']) || empty($params['width'])
             || empty($params['height'])
         ) {
-            $this->error($this->_ERRORS['MISSING_PARAM']['message'], $this->_ERRORS['MISSING_PARAM']['code']);
+            $this->error(DynamicImage::$_ERRORS['MISSING_PARAM']['message'], DynamicImage::$_ERRORS['MISSING_PARAM']['code']);
             return;
         }
 
@@ -124,7 +125,7 @@ class DynamicImage
 
         // Check to make sure both width and height are numbers
         if (!is_numeric($params['width']) || !is_numeric($params['height'])) {
-            $this->error($this->_ERRORS['INTEGER_REQUIRED']['message'], $this->_ERRORS['INTEGER_REQUIRED']['code']);
+            $this->error(DynamicImage::$_ERRORS['INTEGER_REQUIRED']['message'], DynamicImage::$_ERRORS['INTEGER_REQUIRED']['code']);
             return;
         }
 
@@ -177,7 +178,7 @@ class DynamicImage
                 $this->cachedFilename = $this->filename . '-' . $this->width . 'x'
                     . $this->height . $this->extension;
             } else {
-                $this->error($this->_ERRORS['IMAGE_MISSING']['message'], $this->_ERRORS['IMAGE_MISSING']['code']);
+                $this->error(DynamicImage::$_ERRORS['IMAGE_MISSING']['message'], DynamicImage::$_ERRORS['IMAGE_MISSING']['code']);
                 return;
             }
         }
@@ -200,36 +201,44 @@ class DynamicImage
 
         // Check to make sure that the cache is writable before trying to save to it
         if (!is_writable('cache')) {
-            $this->error($this->_ERRORS['INVALID_PERMISSIONS']['message'], $this->_ERRORS['INVALID_PERMISSIONS']['code']);
+            $this->error(DynamicImage::$_ERRORS['INVALID_PERMISSIONS']['message'], DynamicImage::$_ERRORS['INVALID_PERMISSIONS']['code']);
             return;
         }
 
         // Check to make sure that the requested image is writable
         if (!is_readable($this->imageDirectory . $this->filename . $this->extension)) {
-            $this->error($this->_ERRORS['FILE_PERMISSION']['message'], $this->_ERRORS['FILE_PERMISSION']['code']);
+            $this->error(DynamicImage::$_ERRORS['FILE_PERMISSION']['message'], DynamicImage::$_ERRORS['FILE_PERMISSION']['code']);
             return;
         }
 
-        // No cached image exists so we need to create one
-        
         // Check what method we need to use to save image using filetype
         switch($this->extension) {
-        case '.png':
-            $image = imagecreatefrompng(
-                $this->imageDirectory . $this->filename .
-                $this->extension
-            );
-            break;
-        case '.jpg':
-        case '.jpeg':
-            $image = imagecreatefromjpeg(
-                $this->imageDirectory . $this->filename .
-                $this->extension
-            );
-            break;
-        default:
-            $this->error($this->_ERRORS['UNSUPPORTED_EXTENSION']['message'], $this->_ERRORS['UNSUPPORTED_EXTENSION']['code']);
-            return;
+            case '.png':
+                $image = imagecreatefrompng(
+                    $this->imageDirectory . $this->filename .
+                    $this->extension
+                );
+                break;
+            case '.jpg':
+            case '.jpeg':
+                $image = imagecreatefromjpeg(
+                    $this->imageDirectory . $this->filename .
+                    $this->extension
+                );
+                break;
+            case '.gif':
+                $image = $this->resizeGif();
+
+                $image = $image->deconstructImages();
+                $image->writeImages('cache/' . $this->cachedFilename, true);
+
+                $this->file = 'cache/' . $this->cachedFilename;
+
+                // GIFs are handled differently so return here
+                return;
+            default:
+                $this->error(DynamicImage::$_ERRORS['UNSUPPORTED_EXTENSION']['message'], DynamicImage::$_ERRORS['UNSUPPORTED_EXTENSION']['code']);
+                return;
         }
 
         // Create new image resource
@@ -250,13 +259,16 @@ class DynamicImage
         
         // Save the new image as the correct filetype
         switch($this->extension) {
-        case '.png':
-            imagepng($newImage, 'cache/' . $this->cachedFilename);
-            break;
-        case '.jpg':
-        case '.jpeg':
-            imagejpeg($newImage, 'cache/' . $this->cachedFilename);
-            break;
+            case '.png':
+                imagepng($newImage, 'cache/' . $this->cachedFilename);
+                break;
+            case '.jpg':
+            case '.jpeg':
+                imagejpeg($newImage, 'cache/' . $this->cachedFilename);
+                break;
+            case '.gif':
+                imagegif($newImage, 'cache/' . $this->cachedFilename);
+                break;
         }
 
         // Store the image and return
@@ -294,6 +306,21 @@ class DynamicImage
         return substr($file, $finalPeriod);
     }
 
+    private function resizeGif() {
+        $image = new Imagick(
+            $this->imageDirectory . $this->filename .
+            $this->extension
+        );
+
+        $image = $image->coalesceImages();
+
+        foreach ($image as $frame) {
+            $frame->resizeImage($this->width, $this->height, Imagick::FILTER_BOX, 1);
+        }
+
+        return $image;
+    }
+
     /**
      * Checks to see if the requested file is cached and if it is
      * then it checks to see if it is newer that the original
@@ -313,7 +340,7 @@ class DynamicImage
                 return false;
             } else {
                 // Cache dir couldn't be made so display error
-                $this->error($this->_ERRORS['CREATING_CACHE']['message'], $this->_ERRORS['CREATING_CACHE']['code']);
+                $this->error(DynamicImage::$_ERRORS['CREATING_CACHE']['message'], DynamicImage::$_ERRORS['CREATING_CACHE']['code']);
                 return;
             }
         }
