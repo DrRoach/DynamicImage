@@ -15,7 +15,7 @@ class DynamicImageTest extends \Codeception\Test\Unit
         'filename' => 'deadpool.jpg',
         'exceptions' => true,
         'debug' => false,
-        'invalidate_cache' => 0,
+        'invalidate_cache' => 1,
         'image_directory' => 'images/'
     ];
 
@@ -157,8 +157,6 @@ class DynamicImageTest extends \Codeception\Test\Unit
         // Directory of the cache
         $cacheDir = __dir__ . '/../../cache';
 
-        var_dump($cacheDir);
-
         // If the cache directory exists then delete it
         if (is_dir($cacheDir)) {
             // Delete all image file that are in the cache directory
@@ -169,7 +167,6 @@ class DynamicImageTest extends \Codeception\Test\Unit
             }
 
             rmdir($cacheDir);
-            echo "CACHE DELETED\n";
         }
         
         $data = $this->testData;
@@ -195,5 +192,25 @@ class DynamicImageTest extends \Codeception\Test\Unit
         }
 
         $this->assertTrue($error);
+    }
+
+    public function testJpgImageCreation()
+    {
+        $data = $this->testData;
+
+        $di = new DynamicImage($data);
+
+        $this->assertEquals(2, exif_imagetype($di->file));
+    }
+
+    public function testPngImageCreation()
+    {
+        $data = $this->testData;
+
+        $data['filename'] = "mario.png";
+
+        $di = new DynamicImage($data);
+
+        $this->assertEquals(3, exif_imagetype($di->file));
     }
 }

@@ -235,6 +235,13 @@ class DynamicImage
         // Create new image resource
         $newImage = imagecreatetruecolor($this->width, $this->height);
 
+        // If the image is `.png` make sure we respect it's alpha
+        if ($this->extension == ".png") {
+            imagecolortransparent($newImage, imagecolorallocate($newImage, 0, 0, 0));
+            imagealphablending($newImage, false);
+            imagesavealpha($newImage, true);
+        }
+
         // Copy old image over new
         imagecopyresampled(
             $newImage, $image, 0, 0, 0, 0, $this->width,
