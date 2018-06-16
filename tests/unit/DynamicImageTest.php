@@ -110,32 +110,6 @@ class DynamicImageTest extends \Codeception\Test\Unit
     }
 
     /**
-     *  @group main
-     */
-    public function testImagePermissions()
-    {
-        // Make sure by the end of the test error has been set to true
-        $error = false;
-
-        $data = $this->testData;
-
-        // Set incorrect permissions for test file
-        chmod(__DIR__ . '/../../' . $this->testData['image_directory'] . 'test.jpg', 600);
-
-        $data['filename'] = 'test.jpg';
-
-        $di = null;
-        try {
-            $di = new DynamicImage($data);
-        } catch (Exception $e) {
-            $error = true;
-            $this->assertEquals(DynamicImage::$_ERRORS['FILE_PERMISSION']['code'], $e->getCode());
-        }
-
-        $this->assertTrue($error);
-    }
-
-    /**
      *  @group cache
      */
     public function testCreatingCache()
