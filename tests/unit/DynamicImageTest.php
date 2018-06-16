@@ -1,5 +1,4 @@
-<?php
-
+<?php 
 use DynamicImage\DynamicImage;
 
 class DynamicImageTest extends \Codeception\Test\Unit
@@ -120,13 +119,6 @@ class DynamicImageTest extends \Codeception\Test\Unit
 
         $data = $this->testData;
 
-        // Create test image file
-        try {
-            $fp = fopen(__DIR__ . '/../../' . $this->testData['image_directory'] . 'test.jpg', 'w');
-        } catch (Exception $e) {
-            var_dump($e->getMessage());
-        }
-
         // Set incorrect permissions for test file
         chmod(__DIR__ . '/../../' . $this->testData['image_directory'] . 'test.jpg', 600);
 
@@ -141,8 +133,6 @@ class DynamicImageTest extends \Codeception\Test\Unit
         }
 
         $this->assertTrue($error);
-
-        unlink(__DIR__ . '/../../' . $this->testData['image_directory'] . 'test.jpg');
     }
 
     /**
