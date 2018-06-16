@@ -7,6 +7,8 @@ This script has a fully functioning file based cache system which renews when or
 
 At the moment, only `JPG` and `PNG` images are supported.
 
+- [Become a backer or sponsor on Patreon](https://www.patreon.com/DrRoach)
+
 ### Params
 
 The parameters are expected as a `key`, `value` array and passed when the object is created.
