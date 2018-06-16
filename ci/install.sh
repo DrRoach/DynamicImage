@@ -10,11 +10,11 @@ apt-get update -yqq
 apt-get install git -yqq
 apt-get install libpng-dev -yqq
 apt-get install libjpeg-dev -yqq
-apt-get install exif -yqq
+# apt-get install exif -yqq
 apt-get install libmagickwand-dev -yqq
 
 docker-php-ext-configure gd --with-jpeg-dir=/usr/include/
-docker-php-ext-install zip gd
+docker-php-ext-install zip gd exif
 
 pecl install imagick && docker-php-ext-enable imagick
 
