@@ -5,7 +5,7 @@ The goal of this script is to allow images to be generated on the fly to any siz
 
 This script has a fully functioning file based cache system which renews when original images are updated. Images are generated to scale and generated to high resolution. There is also support for images that are hosted on seperate endpoints.
 
-At the moment, only `JPG` and `PNG` images are supported.
+`JPG`, `JPEG`, `PNG` and `GIF` images are supported.
 
 - [Become a backer or sponsor on Patreon](https://www.patreon.com/DrRoach)
 
