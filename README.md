@@ -38,7 +38,7 @@ Request URL
 `http://yousite.com/loadimage.php?filename=snorkel.jpg&width=500&height=500`
 
 loadimage.php
-```PHP
+```php
 <?php
 require_once 'DynamicImage.php';
 
@@ -54,13 +54,13 @@ echo json_encode($DI->file);
 ```
 
 HTML
-```HTML
+```html
 <img src="<?=$DI->file;?>">
 ```
 
 If you have your images saved in a seperate folder, such as `/images`, you can set Dynamic Images to use that folder like so:
 
-```PHP
+```php
 <?php
 require_once 'DynamicImage.php';
 
