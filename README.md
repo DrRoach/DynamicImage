@@ -50,13 +50,30 @@ $settings = [
 
 $DI = new DynamicImage($settings);
 echo json_encode($DI->file);
-;
 ?>
 ```
 
 HTML
 ```HTML
 <img src="<?=$DI->file;?>">
+```
+
+If you have your images saved in a seperate folder, such as `/images`, you can set Dynamic Images to use that folder like so:
+
+```PHP
+<?php
+require_once 'DynamicImage.php';
+
+$settings = [
+    'filename' => $_GET['filename'],
+    'width' => $_GET['width'],
+    'height' => $_GET['height'],
+    'image_directory' => 'images/'
+];
+
+$DI = new DynamicImage($settings);
+echo json_encode($DI->file);
+?>
 ```
 
 ### Potential Issues
