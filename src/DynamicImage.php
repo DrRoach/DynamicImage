@@ -375,6 +375,11 @@ class DynamicImage
      */
     private function _imageExists()
     {
+        // If no image directory is set then set it to root folder
+        if ($this->imageDirectory === null) {
+            $this->imageDirectory = '/';
+        }
+
         return file_exists(
             $this->imageDirectory . $this->filename . $this->extension
         );
