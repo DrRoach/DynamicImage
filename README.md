@@ -1,4 +1,7 @@
 # DynamicImage
+
+![Logo](./logo.png)
+
 Create dynamically sized images on the fly so that they don't need to be resized when added or uploaded.
 
 The goal of this script is to allow images to be generated on the fly to any size. This is done by using PHPs imagick libraries to creating images in a fraction of a second.
