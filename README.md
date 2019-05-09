@@ -5,7 +5,9 @@ The goal of this script is to allow images to be generated on the fly to any siz
 
 This script has a fully functioning file based cache system which renews when original images are updated. Images are generated to scale and generated to high resolution. There is also support for images that are hosted on seperate endpoints.
 
-At the moment, only `JPG` and `PNG` images are supported.
+`JPG`, `JPEG`, `PNG` and `GIF` images are supported.
+
+- [Become a backer or sponsor on Patreon](https://www.patreon.com/DrRoach)
 
 ### Params
 
@@ -36,7 +38,8 @@ Request URL
 `http://yousite.com/loadimage.php?filename=snorkel.jpg&width=500&height=500`
 
 loadimage.php
-```PHP
+```php
+<?php
 require_once 'DynamicImage.php';
 
 $settings = [
@@ -47,13 +50,30 @@ $settings = [
 
 $DI = new DynamicImage($settings);
 echo json_encode($DI->file);
-exit
 ?>
 ```
 
 HTML
-```HTML
-<img src="<?=$DI->file?>">
+```html
+<img src="<?=$DI->file;?>">
+```
+
+If you have your images saved in a seperate folder, such as `/images`, you can set Dynamic Images to use that folder like so:
+
+```php
+<?php
+require_once 'DynamicImage.php';
+
+$settings = [
+    'filename' => $_GET['filename'],
+    'width' => $_GET['width'],
+    'height' => $_GET['height'],
+    'image_directory' => 'images/'
+];
+
+$DI = new DynamicImage($settings);
+echo json_encode($DI->file);
+?>
 ```
 
 ### Potential Issues
