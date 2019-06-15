@@ -2,3 +2,4 @@ cache/
 tests/_support/
 tests/_output/
 vendor/
+test.php
