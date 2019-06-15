@@ -22,7 +22,11 @@ class Cache
 
     public function get($image)
     {
+        if (!$this->exists($image)) {
+            return false;
+        }
 
+        return __DIR__ . $this->cacheDir . md5($image);
     }
 
     private function fileExists($fullPath)
