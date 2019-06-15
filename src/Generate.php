@@ -10,7 +10,7 @@ class Generate
 
         switch ($type) {
             case IMAGETYPE_JPEG:
-                return $this->jpg(__DIR__ . "/.." . $image, $width, $height, $cacheDir);
+                return $this->jpg($image, __DIR__ . "/..", $width, $height, $cacheDir);
                 break;
             case IMAGETYPE_PNG:
                 return png($image);
@@ -23,9 +23,10 @@ class Generate
         }
     }
 
-    private function jpg($image, $width, $height, $saveDir)
+    private function jpg($image, $path, $width, $height, $saveDir)
     {
-        $imageResource = imagecreatefromjpeg($image);
+        $fullImage = $path . $image;
+        $imageResource = imagecreatefromjpeg($fullImage);
 
         $newImage = imagecreatetruecolor($width, $height);
 
