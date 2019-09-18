@@ -30,16 +30,24 @@ class Generate
 
         $newImage = imagecreatetruecolor($width, $height);
 
-        imagecopyresampled(
-            $newImage, $imageResource, 0, 0, 0, 0, $width, $height, imagesx($imageResource), imagesy($imageResource)
-        );
+        imagecopyresampled($newImage, $imageResource, 0, 0, 0, 0, $width, $height, imagesx($imageResource), imagesy($imageResource));
 
         imagejpeg($newImage, $saveDir . md5($image) . ".jpg");
     }
 
-    private function png($image)
+    private function png($image, $path, $width, $height, $saveDir)
     {
+        $fullImage = $path . $image;
+        $imageResource = imagecreatefrompng($fullImage);
 
+        $newImage = imagecreatetruecolor($width, $height);
+
+        imagecolortransparent($newImage, imagecolorallocate($newImage, 0, 0, 0));
+        imagealphablending($newImage, false);
+        imagesavealpha($newImage, true);
+        imagecopyresampled($newImage, $imageResource, 0, 0, 0, 0, $width, $height, imagesx($imageResource), imagesy($imageResource));
+
+        imagepng($newImage, $saveDir . md5($image));
     }
 
     private function gif($image)
