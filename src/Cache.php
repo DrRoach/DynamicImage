@@ -17,16 +17,22 @@ class Cache
 
     public function exists($image)
     {
-        return $this->fileExists(__DIR__ . $this->cacheDir . md5($image));
+        $extension = explode(".", $image);
+        $extension = $extension[sizeof($extension) - 1];
+
+        return $this->fileExists(__DIR__ . $this->cacheDir . md5($image) . ".{$extension}");
     }
 
     public function get($image)
     {
+        $extension = explode(".", $image);
+        $extension = $extension[sizeof($extension) - 1];
+
         if (!$this->exists($image)) {
             return false;
         }
 
-        return __DIR__ . $this->cacheDir . md5($image);
+        return $this->cacheDir . md5($image) . ".{$extension}";
     }
 
     private function fileExists($fullPath)

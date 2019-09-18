@@ -6,7 +6,7 @@ class Generate
 {
     public function __construct($image, $width, $height, $cacheDir = "cache/")
     {
-        $type = $this->getExtension(__DIR__ . "/.." . $image);
+        $type = $this->getExtension($image);
 
         switch ($type) {
             case IMAGETYPE_JPEG:
@@ -34,7 +34,7 @@ class Generate
             $newImage, $imageResource, 0, 0, 0, 0, $width, $height, imagesx($imageResource), imagesy($imageResource)
         );
 
-        imagejpeg($newImage, $saveDir . md5($image));
+        imagejpeg($newImage, $saveDir . md5($image) . ".jpg");
     }
 
     private function png($image)
@@ -49,7 +49,7 @@ class Generate
 
 	private function getExtension($image)
 	{
-        return exif_imagetype($image);
+        return exif_imagetype(__DIR__ . "/../" . $image);
 	}
 }
 
