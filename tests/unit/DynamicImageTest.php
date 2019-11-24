@@ -1,7 +1,7 @@
 <?php 
 use DynamicImage\DynamicImage;
 
-class DynamicImageTest extends PHPUnit\Framework\TestCase
+class DynamicImageTest extends \Codeception\Test\Unit
 {
     /**
      * @var \UnitTester
@@ -36,6 +36,8 @@ class DynamicImageTest extends PHPUnit\Framework\TestCase
      */
     public function testReformatImageInput()
     {
+        `rm -rf images/cache && rm -rf cache && mkdir images/cache && mkdir cache`;
+
         $width = 500;
         $height = 500;
 
@@ -73,6 +75,8 @@ class DynamicImageTest extends PHPUnit\Framework\TestCase
      */
     public function testMissingParams()
     {
+        `rm -rf images/cache && rm -rf cache && mkdir images/cache && mkdir cache`;
+
         $width = 500;
         $height = 500;
 
@@ -99,6 +103,8 @@ class DynamicImageTest extends PHPUnit\Framework\TestCase
      */
     public function testImageMissingWithFalsePlaceholderImage()
     {
+        `rm -rf images/cache && rm -rf cache && mkdir images/cache && mkdir cache`;
+
         $width = 500;
         $height = 500;
         $missingImageName = "imagethatdoesnotexist.jpg";
@@ -126,6 +132,8 @@ class DynamicImageTest extends PHPUnit\Framework\TestCase
      */
     public function testMissingImageWithPlaceholder()
     {
+        `rm -rf images/cache && rm -rf cache && mkdir images/cache && mkdir cache`;
+
         $width = 500;
         $height = 500;
         $missingImageName = "imagethatdoesnotexist.jpg";
@@ -151,6 +159,8 @@ class DynamicImageTest extends PHPUnit\Framework\TestCase
      */
     public function testFullGenerate()
     {
+        `rm -rf images/cache && rm -rf cache && mkdir images/cache && mkdir cache`;
+
         $width = 500;
         $height = 500;
 
