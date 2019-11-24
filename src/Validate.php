@@ -6,7 +6,7 @@ class Validate
 {
     private static $errors = [];
 
-    public static function input($params)
+    public static function input($params = [])
     {
         if (empty($params)) {
             static::$errors[] = "Missing parameters";
