@@ -2,6 +2,8 @@
 
 namespace DynamicImage;
 
+use Imagick;
+
 class Generate
 {
     public function __construct($image, $width, $height, $cacheDir = "cache/")
@@ -13,10 +15,10 @@ class Generate
                 return $this->jpg($image, __DIR__ . "/..", $width, $height, $cacheDir);
                 break;
             case IMAGETYPE_PNG:
-                return png($image);
+                return $this->png($image, __DIR__ . "/..", $width, $height, $cacheDir);
                 break;
             case IMAGETYPE_GIF:
-                return gif($image);
+                return $this->gif($image, __DIR__ . "/..", $width, $height, $cacheDir);
                 break;
             default:
                 return false;
@@ -47,12 +49,23 @@ class Generate
         imagesavealpha($newImage, true);
         imagecopyresampled($newImage, $imageResource, 0, 0, 0, 0, $width, $height, imagesx($imageResource), imagesy($imageResource));
 
-        imagepng($newImage, $saveDir . md5($image));
+        imagepng($newImage, $saveDir . md5($image) . ".png");
     }
 
-    private function gif($image)
+    private function gif($image, $path, $width, $height, $saveDir)
     {
+        $fullImage = $path . $image;
 
+        $newImage = new Imagick($fullImage);
+
+        $newImage = $newImage->coalesceImages();
+
+        foreach ($newImage as $frame) {
+            $frame->resizeImage($width, $height, Imagick::FILTER_BOX, 1);
+        }
+
+        $newImage = $newImage->deconstructImages();
+        $newImage->writeImages($saveDir . md5($image) . ".gif", true);
     }
 
 	private function getExtension($image)
